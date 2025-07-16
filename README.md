@@ -20,21 +20,22 @@ This orchestrator addresses all of these issues with a modular, scalable reboot 
 
 ```mermaid
 flowchart TD
-    SNOW([ServiceNow (Mocked JSON)])
-    GH([GitHub Actions / Local Trigger])
-    SCR([create_eventbridge_rules.py])
-    EB([EventBridge Scheduler])
-    NOTIFY([Lambda: notify.py])
-    REBOOT([Lambda: reboot.py])
-    VALIDATE([Lambda: validate.py])
-    FAIL([Lambda: failure_handler.py])
-    SNS([SNS Topic → Email Alerts])
-
-    SNOW --> GH --> SCR --> EB
+    SNOW[ServiceNow (Mocked JSON)]
+    GH[GitHub Actions (or local trigger)]
+    SCR[scripts/create_eventbridge_rules.py]
+    EB[EventBridge (3 rules per host)]
+    NOTIFY[Lambda: notify.py]
+    REBOOT[Lambda: reboot.py]
+    VALIDATE[Lambda: validate.py]
+    FAIL[Lambda: failure_handler.py]
+    SNS[SNS Topic → Email]
+    
+    SNOW -->|Input JSON| GH --> SCR
+    SCR --> EB
     EB --> NOTIFY
     EB --> REBOOT
     EB --> VALIDATE
-    VALIDATE -->|On failure| FAIL --> SNS
+    VALIDATE -->|Fail| FAIL --> SNS
     NOTIFY --> SNS
 📁 Folder Structure
 bash
@@ -99,9 +100,18 @@ Edit
 bash
 Copy
 Edit
+# Git Bash / Linux
 export REBOOT_LAMBDA_ARN="arn:aws:lambda:ap-south-1:<your-account>:function:reboot-ec2-orchestrator"
 export NOTIFY_LAMBDA_ARN="arn:aws:lambda:ap-south-1:<your-account>:function:ec2-reboot-notify"
 export VALIDATE_LAMBDA_ARN="arn:aws:lambda:ap-south-1:<your-account>:function:ec2-reboot-validate"
+Or in PowerShell:
+
+powershell
+Copy
+Edit
+$env:REBOOT_LAMBDA_ARN="arn:aws:lambda:ap-south-1:..."
+$env:NOTIFY_LAMBDA_ARN="..."
+$env:VALIDATE_LAMBDA_ARN="..."
 ✅ 3. Run Rule Generator
 bash
 Copy
@@ -158,3 +168,11 @@ GitHub: ashishpal999
 
 🛡️ License
 This project is for educational and internal automation use. Customize before production use.
+
+yaml
+Copy
+Edit
+
+---
+
+   ```bash
