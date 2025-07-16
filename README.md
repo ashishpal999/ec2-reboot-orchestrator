@@ -37,10 +37,13 @@ flowchart TD
     EB --> VALIDATE
     VALIDATE -->|Fail| FAIL --> SNS
     NOTIFY --> SNS
+```
+
+---
+
 📁 Folder Structure
-bash
-Copy
-Edit
+
+```bash
 ec2-reboot-orchestrator/
 ├── input/
 │   └── mock_snow_input.json         # Mocked input from SNOW API
@@ -52,36 +55,32 @@ ec2-reboot-orchestrator/
 ├── scripts/
 │   └── create_eventbridge_rules.py  # Generates 3 EventBridge rules per host
 ├── README.md
+```
+
+---
+
 ⚙️ Setup Instructions
-✅ Prerequisites
-Python 3.8+
+### ✅ Prerequisites
+- Python 3.8+
+- AWS CLI configured (aws configure)
+- Necessary AWS IAM permissions
+- Lambda functions created:
+ - `ec2-reboot-notify`
+ - `reboot-ec2-orchestrator`
+ - `ec2-reboot-validate`
+ - `ec2-reboot-failure-handler`
+```
 
-AWS CLI configured (aws configure)
+### ✅ 1. Prepare Mock Input (like SNOW payload)
 
-Necessary AWS IAM permissions
-
-Lambda functions created:
-
-ec2-reboot-notify
-
-reboot-ec2-orchestrator
-
-ec2-reboot-validate
-
-ec2-reboot-failure-handler
-
-✅ 1. Prepare Mock Input (like SNOW payload)
 Edit or generate your input at:
 
-bash
-Copy
-Edit
+```bash
 input/mock_snow_input.json
-Sample format:
+```
 
-json
-Copy
-Edit
+Sample format:
+```json
 [
   {
     "hostname": "ip-172-31-10-10.ap-south-1.compute.internal",
@@ -96,77 +95,63 @@ Edit
     }
   }
 ]
-✅ 2. Export Required ENV Vars
-bash
-Copy
-Edit
+```
+
+### ✅ 2. Export Required ENV Vars
+
+```bash
 # Git Bash / Linux
 export REBOOT_LAMBDA_ARN="arn:aws:lambda:ap-south-1:<your-account>:function:reboot-ec2-orchestrator"
 export NOTIFY_LAMBDA_ARN="arn:aws:lambda:ap-south-1:<your-account>:function:ec2-reboot-notify"
 export VALIDATE_LAMBDA_ARN="arn:aws:lambda:ap-south-1:<your-account>:function:ec2-reboot-validate"
-Or in PowerShell:
+```
 
-powershell
-Copy
-Edit
-$env:REBOOT_LAMBDA_ARN="arn:aws:lambda:ap-south-1:..."
-$env:NOTIFY_LAMBDA_ARN="..."
-$env:VALIDATE_LAMBDA_ARN="..."
-✅ 3. Run Rule Generator
-bash
-Copy
-Edit
+### ✅ 3. Run Rule Generator
+```bash
 python scripts/create_eventbridge_rules.py
+```
+
 Expected output:
+- 🔧 Reboot rule created
+- 🔔 Notify rule created
+- 🔍 Validate rule created
+- ⏭️ Skipping EKS/ASG node
 
-🔧 Reboot rule created
+---
 
-🔔 Notify rule created
+### 🧪 Testing Guide
 
-🔍 Validate rule created
-
-⏭️ Skipping EKS/ASG node
-
-🧪 Testing Guide
 Each Lambda can be tested via AWS Console:
 
-notify.py: sends SNS email to notify_emails
-
-reboot.py: creates snapshot + reboots instance
-
-validate.py: checks instance health → calls failure_handler.py on failure
-
-failure_handler.py: sends alert if validation fails
+- `notify.py: sends SNS email to notify_emails`
+- `reboot.py: creates snapshot + reboots instance`
+- `validate.py: checks instance health → calls failure_handler.py on failure`
+- `failure_handler.py: sends alert if validation fails`
 
 Use sample test events included in this repo or console.
 
-💡 Future Enhancements
-🧩 1. ServiceNow Catalog Integration (auto-payload)
-Build SNOW catalog where user selects instance + time
+---
 
-Backend generates JSON and triggers GitHub Action or S3 upload
+### 💡 Future Enhancements
 
-📆 2. CMDB-Driven Maintenance Window
-Lookup maintenance window dynamically from SNOW CMDB
+### 🧩 1. ServiceNow Catalog Integration (auto-payload)
+- Build SNOW catalog where user selects instance + time
+- Backend generates JSON and triggers GitHub Action or S3 upload
 
-Use real schedule to build EventBridge rules
+### 📆 2. CMDB-Driven Maintenance Window
+- Lookup maintenance window dynamically from SNOW CMDB
+- Use real schedule to build EventBridge rules
 
-📥 3. S3-Triggered Reboot Pipeline (Excel upload)
-Upload .xlsx or .json to S3
+### 📥 3. S3-Triggered Reboot Pipeline (Excel upload)
+- Upload .xlsx or .json to S3
+- Triggers Lambda that parses input and auto-creates rules
 
-Triggers Lambda that parses input and auto-creates rules
+### 🤖 4. GitHub Actions Integration
+- When PR merged → auto-runs rule creation pipeline
 
-🤖 4. GitHub Actions Integration
-When PR merged → auto-runs rule creation pipeline
+### Full CI/CD for reboot orchestration
 
-Full CI/CD for reboot orchestration
-
-👨‍💼 Author
-Ashish Pal
-SRE | DevOps | Cloud Infra | Automation Architect
-GitHub: ashishpal999
+--- 
 
 🛡️ License
 This project is for educational and internal automation use. Customize before production use.
-
-   ```bash
