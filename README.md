@@ -37,6 +37,7 @@ flowchart TD
     EB --> VALIDATE
     VALIDATE -->|Fail| FAIL --> SNS
     NOTIFY --> SNS
+```
     
 📁 Folder Structure
 ec2-reboot-orchestrator/
