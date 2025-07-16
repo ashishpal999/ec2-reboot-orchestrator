@@ -1,10 +1,10 @@
-# EC2 Reboot Orchestrator
+# 🚀 EC2 Reboot Orchestrator
 
 An event-driven, fully automated solution to orchestrate EC2 instance reboots across regions based on ServiceNow-driven inputs. This project leverages AWS EventBridge, Lambda, SNS, and Python scripts to handle pre-reboot notifications, snapshot backups, instance rebooting, validation, and failure alerting.
 
 ---
 
-##  Problem Statement
+## 🔧 Problem Statement
 
 Many organizations struggle with:
 - Manual EC2 reboot operations across regions
@@ -16,7 +16,7 @@ This orchestrator addresses all of these issues with a modular, scalable reboot 
 
 ---
 
-##  Architecture Overview
+## 📐 Architecture Overview
 
 ```mermaid
 flowchart TD
@@ -37,7 +37,7 @@ flowchart TD
     EB --> VALIDATE
     VALIDATE -->|Fail| FAIL --> SNS
     NOTIFY --> SNS
-
+    
 📁 Folder Structure
 ec2-reboot-orchestrator/
 ├── input/
