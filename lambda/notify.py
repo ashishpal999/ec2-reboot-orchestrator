@@ -24,7 +24,7 @@ If this is unexpected, please contact the support team.
 (This was triggered via EC2 Reboot Automation Pipeline)
 """
 
-    print(f"📣 Sending notification for {hostname} to: {emails}")
+    print(f" Sending notification for {hostname} to: {emails}")
 
     # Loop through emails and send SNS notifications (or use a topic in prod)
     for email in emails:

@@ -16,7 +16,7 @@ def lambda_handler(event, context):
 
     subject = f"[ALERT] Validation failed after reboot - {hostname}"
     message = f"""
-🚨 Reboot Validation Failed
+Reboot Validation Failed
 
 Hostname     : {hostname}
 Instance ID  : {instance_id}
@@ -30,7 +30,7 @@ Please investigate or escalate immediately.
 """
 
     if not topic_arn or not emails:
-        print("❌ Missing SNS_TOPIC_ARN or recipient emails")
+        print(" Missing SNS_TOPIC_ARN or recipient emails")
         return {"status": "error", "reason": "Missing config"}
 
     for email in emails:
@@ -46,9 +46,9 @@ Please investigate or escalate immediately.
                     }
                 }
             )
-            print(f"📣 Alert sent to {email}")
+            print(f" Alert sent to {email}")
         except Exception as e:
-            print(f"❌ Failed to notify {email}: {e}")
+            print(f" Failed to notify {email}: {e}")
 
     # Simulate SNOW ticket creation
     print(f"📋 Simulated SNOW ticket update for {ticket} - Validation failed")

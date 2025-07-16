@@ -49,7 +49,7 @@ def create_event_rule(instance, rule_suffix="reboot"):
     except lambda_client.exceptions.ResourceConflictException:
         pass
 
-    print(f"✅ Reboot rule created: {rule_name}")
+    print(f" Reboot rule created: {rule_name}")
 
 
 def create_notify_event_rule(instance, rule_suffix="notify"):
@@ -64,7 +64,7 @@ def create_notify_event_rule(instance, rule_suffix="notify"):
     cron_expr = f"cron({notify_utc.minute} {notify_utc.hour} {notify_utc.day} {notify_utc.month} ? {notify_utc.year})"
     rule_name = f"{rule_suffix}-{hostname.split('.')[0]}-{notify_utc.strftime('%Y%m%d%H%M')}"
 
-    print(f"🔔 Creating NOTIFY rule: {rule_name} at {notify_utc.isoformat()} in {region}")
+    print(f" Creating NOTIFY rule: {rule_name} at {notify_utc.isoformat()} in {region}")
     events_client = boto3.client('events', region_name=region)
     lambda_client = boto3.client('lambda', region_name=region)
 
@@ -93,7 +93,7 @@ def create_notify_event_rule(instance, rule_suffix="notify"):
     except lambda_client.exceptions.ResourceConflictException:
         pass
 
-    print(f"✅ Notify rule created: {rule_name}")
+    print(f" Notify rule created: {rule_name}")
 
 
 def create_validate_event_rule(instance, rule_suffix="validate"):
@@ -136,7 +136,7 @@ def create_validate_event_rule(instance, rule_suffix="validate"):
     except lambda_client.exceptions.ResourceConflictException:
         pass
 
-    print(f"✅ Validate rule created: {rule_name}")
+    print(f" Validate rule created: {rule_name}")
 
 
 def load_input_and_create_rules(input_file="input/mock_snow_input.json"):
@@ -146,7 +146,7 @@ def load_input_and_create_rules(input_file="input/mock_snow_input.json"):
     for instance in data:
         tags = instance.get("tags", {})
         if tags.get("EKS", "false").lower() == "true" or tags.get("ASG", "false").lower() == "true":
-            print(f"⏭️ Skipping {instance['hostname']} (EKS/ASG node)")
+            print(f" Skipping {instance['hostname']} (EKS/ASG node)")
             continue
 
         create_event_rule(instance)
@@ -154,6 +154,6 @@ def load_input_and_create_rules(input_file="input/mock_snow_input.json"):
         create_validate_event_rule(instance)
 
 
-# ✅ Call the function only at the end
+# Call the function only at the end
 if __name__ == "__main__":
     load_input_and_create_rules()

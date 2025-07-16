@@ -7,11 +7,11 @@ def lambda_handler(event, context):
     hostname = event.get("hostname", "unknown-host")
 
     ec2 = boto3.client("ec2", region_name=region)
-    print(f"🔍 Validating reboot of instance: {instance_id} ({hostname}) in {region}")
+    print(f" Validating reboot of instance: {instance_id} ({hostname}) in {region}")
 
     # Wait for up to 5 minutes to become healthy
     try:
-        print("⏳ Waiting for instance to pass status checks...")
+        print(" Waiting for instance to pass status checks...")
         waiter = ec2.get_waiter('instance_status_ok')
         waiter.wait(
             InstanceIds=[instance_id],
@@ -20,14 +20,14 @@ def lambda_handler(event, context):
                 'MaxAttempts': 20
             }
         )
-        print("✅ Instance passed EC2 status checks")
+        print(" Instance passed EC2 status checks")
         return {
             "status": "success",
             "hostname": hostname,
             "instance_id": instance_id
         }
     except Exception as e:
-        print(f"❌ Validation failed for {instance_id}: {e}")
+        print(f" Validation failed for {instance_id}: {e}")
 
         # Trigger failure handler Lambda (future step)
         failure_event = {
@@ -46,9 +46,9 @@ def lambda_handler(event, context):
                 InvocationType='Event',
                 Payload=json.dumps(failure_event)
             )
-            print("🚨 Triggered failure handler Lambda.")
+            print(" Triggered failure handler Lambda.")
         except Exception as invoke_error:
-            print(f"⚠️ Could not trigger failure handler: {invoke_error}")
+            print(f" Could not trigger failure handler: {invoke_error}")
 
         return {
             "status": "failed",
