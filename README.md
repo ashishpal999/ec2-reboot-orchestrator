@@ -169,10 +169,4 @@ GitHub: ashishpal999
 🛡️ License
 This project is for educational and internal automation use. Customize before production use.
 
-yaml
-Copy
-Edit
-
----
-
-```
+   ```bash
