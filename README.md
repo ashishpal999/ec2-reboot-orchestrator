@@ -20,22 +20,21 @@ This orchestrator addresses all of these issues with a modular, scalable reboot 
 
 ```mermaid
 flowchart TD
-    SNOW[ServiceNow (Mocked JSON)]
-    GH[GitHub Actions (or local trigger)]
-    SCR[scripts/create_eventbridge_rules.py]
-    EB[EventBridge (3 rules per host)]
-    NOTIFY[Lambda: notify.py]
-    REBOOT[Lambda: reboot.py]
-    VALIDATE[Lambda: validate.py]
-    FAIL[Lambda: failure_handler.py]
-    SNS[SNS Topic → Email]
-    
-    SNOW -->|Input JSON| GH --> SCR
-    SCR --> EB
+    SNOW(["ServiceNow (Mocked JSON)"])
+    GH(["GitHub Actions / Local Trigger"])
+    SCR(["create_eventbridge_rules.py"])
+    EB(["EventBridge Scheduler"])
+    NOTIFY(["Lambda: notify.py"])
+    REBOOT(["Lambda: reboot.py"])
+    VALIDATE(["Lambda: validate.py"])
+    FAIL(["Lambda: failure_handler.py"])
+    SNS(["SNS Topic and Email"])
+
+    SNOW --> GH --> SCR --> EB
     EB --> NOTIFY
     EB --> REBOOT
     EB --> VALIDATE
-    VALIDATE -->|Fail| FAIL --> SNS
+    VALIDATE -->|On failure| FAIL --> SNS
     NOTIFY --> SNS
 ```
 
@@ -75,7 +74,7 @@ ec2-reboot-orchestrator/
 
 Edit or generate your input at:
 
-```bash
+```txt  
 input/mock_snow_input.json
 ```
 
